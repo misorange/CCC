@@ -97,23 +97,74 @@ const write_JSON_to_db = async (table_name) => {
 
     // JSONデータをデータベースに挿入
     const insert_stmt = database.prepare(`INSERT INTO ${table_name} (id, title, dueDate, completed, description) VALUES (?, ?, ?, ?, ?)`);
-    const new_datas = await get_new_datas("tasks", tasks, database);
-    for (const data of new_datas) {
-        try {
-            await new Promise((resolve, reject) => {
-                insert_stmt.run(data.id, data.title, data.dueDate, data.completed, data.description, (err) => {
-                    if (err) {
-                        return reject(err);
-                    }
-                    resolve();
+    const db_data = await new Promise((resolve, reject) => {
+        database.all(`SELECT * FROM ${table_name}`, [], (err, rows) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(rows);
+        });
+    });
+    const update_stmt = database.prepare(`UPDATE ${table_name} SET title = ?, dueDate = ?, completed = ?, description = ? WHERE id = ?`);
+    
+    const json_ids = tasks.map(task => task.id);
+    const db_ids = db_data.map(task => task.id);
+    // 新しいデータを挿入
+    for (const task of tasks) {
+        if (!db_ids.includes(task.id)) {
+            try {
+                await new Promise((resolve, reject) => {
+                    insert_stmt.run(task.id, task.title, task.dueDate, task.completed, task.description, (err) => {
+                        if (err) {
+                            return reject(err);
+                        }
+                        resolve();
+                    });
                 });
-            });
-        } catch (err) {
-            console.error(`Error inserting task with id ${data.id}:`, err);
+            } catch (err) {
+                console.error(`Error inserting task with id ${task.id}:`, err);
+            }
+        }
+    }
+
+    // 既存のデータを更新
+    for (const task of tasks) {
+        if (db_ids.includes(task.id)) {
+            try {
+                await new Promise((resolve, reject) => {
+                    update_stmt.run(task.title, task.dueDate, task.completed, task.description, task.id, (err) => {
+                        if (err) {
+                            return reject(err);
+                        }
+                        resolve();
+                    });
+                });
+            } catch (err) {
+                console.error(`Error updating task with id ${task.id}:`, err);
+            }
+        }
+    }
+
+    // データベースに存在するがJSONに存在しないデータを削除
+    for (const db_task of db_data) {
+        if (!json_ids.includes(db_task.id)) {
+            try {
+                await new Promise((resolve, reject) => {
+                    database.run(`DELETE FROM ${table_name} WHERE id = ?`, db_task.id, (err) => {
+                        if (err) {
+                            return reject(err);
+                        }
+                        resolve();
+                    });
+                });
+            } catch (err) {
+                console.error(`Error deleting task with id ${db_task.id}:`, err);
+            }
         }
     }
     
     insert_stmt.finalize();
+    update_stmt.finalize();
 
     console.log('New tasks have been imported to the database.');
 };
@@ -124,15 +175,15 @@ const get_new_datas = async (table_name, datas, database) => {
         return [];
     }
 
-    const json_ids = datas.map(item => item.id);
     const db_ids = await new Promise((resolve, reject) => {
-                                database.all(`SELECT id FROM ${table_name}`, [], (err, rows) => {
-                                    if (err) {
-                                        return reject(err);
-                                    }
-                                    resolve(rows.map(row => row.id));
-                                });
-                            });
+        database.all(`SELECT id FROM ${table_name}`, [], (err, rows) => {
+            if (err) {
+                return reject(err);
+            }
+            resolve(rows.map(row => row.id));
+        });
+    });
+
     const new_datas = datas.filter(data => !db_ids.includes(data.id));
     return new_datas;
 };
