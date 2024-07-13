@@ -1,5 +1,15 @@
 # CCC's Hack U project
 
+## Table of Contents
+
+- [Overview](#overview)
+- [Feature](#feature)
+- [Prerequisites](#prerequisites)
+- [How to use](#how-to-use)
+- [Linking to JSON files](#linking-to-json-files)
+- [Directory Configuration](#directory-configuration)
+- [How to Participate in Development](#how-to-participate-in-development)
+
 ## Overview
 
 このプロジェクトは、SQLiteとNode.jsを使用して構築された、
@@ -71,6 +81,44 @@
 
 
 **上に同じくまだtaskのみ対応なのでそれ以外も行けるようにします**
+
+## Directory Configuration
+
+    project-root/
+    │
+    ├── index.html         # メインのHTMLファイル
+    ├── about.html         # 追加のページ（例：Aboutページ）
+    ├── schedule.html      # 時間割ページ
+    ├── tasks.html         # 課題リストページ
+    ├── calendar.html
+    │
+    ├── css/               # CSSファイルを格納するディレクトリ
+    │   ├── styles.css     # メインのスタイルシート
+    │   └── schedule.css   # 時間割ページ専用のスタイルシート
+    │
+    ├── js/                # JavaScriptファイルを格納するディレクトリ
+    │   ├── main.js        # メインのJavaScriptファイル
+    │   ├── schedule.js    # 時間割ページ専用のJavaScriptファイル
+    │   └── tasks.js       # 課題リストページ専用のJavaScriptファイル
+    │
+    ├── img/               # 画像ファイルを格納するディレクトリ
+    │   └── logo.png       # ロゴ画像など
+    │
+    ├── backend/              # バックエンドのディレクトリ
+    │   ├── database.db     # データベースのdbデータ
+    │   ├── db.js     # データベースについてのJSデータ
+    │   ├── package-lock.json
+    │   ├── package.json
+    │   ├── server.js     # serverのJSファイル
+    │   ├── node_modules/
+    │   │   └── ...
+    │   ├── models/
+    │   │   └── ...
+    │   └── data/     # データを格納するディレクトリ
+    │       └── ...
+    │
+    └── README.md          # プロジェクトの概要等を記載するREADMEファイル
+
 
 ## How to Participate in Development
 1. **レポジトリをクローン:**
