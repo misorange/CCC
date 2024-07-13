@@ -1,0 +1,44 @@
+<!-- tasks.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tasks</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script defer src="js/tasks.js"></script>
+</head>
+<body>
+    <h1>Task List</h1>
+    <ul id="task-list"></ul>
+
+    <h2>Add New Task</h2>
+    <form id="task-form">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required>
+        <label for="dueDate">Due Date:</label>
+        <input type="date" id="dueDate" name="dueDate" required>
+        <button type="submit">Add Task</button>
+    </form>
+
+    <h2>Update Task</h2>
+    <form id="update-task-form">
+        <label for="update-id">Task ID:</label>
+        <input type="number" id="update-id" name="update-id" required>
+        <label for="update-title">Title:</label>
+        <input type="text" id="update-title" name="update-title" required>
+        <label for="update-dueDate">Due Date:</label>
+        <input type="date" id="update-dueDate" name="update-dueDate" required>
+        <label for="update-completed">Completed:</label>
+        <input type="checkbox" id="update-completed" name="update-completed">
+        <button type="submit">Update Task</button>
+    </form>
+
+    <h2>Delete Task</h2>
+    <form id="delete-task-form">
+        <label for="delete-id">Task ID:</label>
+        <input type="number" id="delete-id" name="delete-id" required>
+        <button type="submit">Delete Task</button>
+    </form>
+</body>
+</html>
