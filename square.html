@@ -4,16 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>教えあい広場</title>
-    <link rel="stylesheet" href="css/square.css">
+    <link rel="stylesheet" href="css/square.css"> <!-- 改良されたCSSを読み込む -->
 </head>
 <body>
     <h1>教えあい広場</h1>
+
+    <!-- 投稿フォーム -->
     <div id="postForm">
         <textarea id="postContent" rows="4" cols="50" placeholder="ここに入力してください..." class="input-field"></textarea><br>
         <button onclick="submitPost()">投稿する</button>
     </div>
+
+    <!-- 投稿リスト表示エリア -->
     <div id="postList"></div>
 
-    <script src="js/square.js"></script>
+    <script src="js/square.js"></script> <!-- JavaScriptのロジックを読み込む -->
 </body>
 </html>

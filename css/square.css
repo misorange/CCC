@@ -1,47 +1,93 @@
+@font-face {
+    font-family: 'TanukiMagic';
+    src: url('../font/TanukiMagic.ttf') format('truetype'); /* パスを修正 */
+    font-weight: normal;
+    font-style: normal;
+}
+
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'TanukiMagic', Arial, sans-serif; /* TanukiMagicをデフォルトフォントに設定 */
+    background-color: #FFF6E8;
+    margin: 0;
+    padding: 20px;
+}
+
+
+h1 {
+    font-size: 36px; /* フォントサイズを大きく */
+    color: #333; /* 文字色を濃いめに */
+    margin-bottom: 30px; /* タイトルの下に余白を追加 */
+    text-align: center; /* タイトルだけを中央に配置 */
+    font-weight: bold; /* 太字にして目立たせる */
+    letter-spacing: 2px; /* 文字の間隔を少し広げる */
+}
+
+textarea {
+    resize: none;
 }
 
 .input-field {
-    width: 400px;        /* 幅を指定 */
-    height: 100px;       /* 高さを指定 */
-    padding: 5px;        /* パディングを指定 */
-    font-size: 16px;     /* フォントサイズを指定 */
-    box-sizing: border-box; /* パディングを含めたサイズ計算 */
-    vertical-align: top;  /* 上に揃える（textareaは自動的に上揃えですが、明示的に設定） */
+    width: 100%;        
+    max-width: 500px;   
+    height: 100px;      
+    padding: 10px;      
+    font-size: 16px;    
+    box-sizing: border-box;
+    vertical-align: top;
+    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #FFF;
 }
 
 #postForm {
     margin-bottom: 20px;
+    display: flex; /* フレックスボックスを使用 */
+    flex-direction: column; /* 縦に並べる */
+    align-items: center; /* 中央揃え */
 }
+
 .post {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 10px;
     position: relative;
+    background-color: #FFFFFF;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
 .replyForm {
     margin-top: 10px;
-    margin-left: 20px;
+    margin-left: 40px;
 }
+
 .reply {
-    border: 1px solid #aaa;
-    padding: 8px;
-    margin-top: 5px;
-    margin-left: 20px;
+    border: 1px solid #ddd;
+    padding: 12px;
+    margin-top: 10px;
+    margin-left: 40px;
     border-radius: 5px;
     position: relative;
+    background-color: #F9F9F9;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
 .deleteButton {
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: red;
+    background-color: #FF4C4C;
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 3px;
+    padding: 5px 10px;
+    font-size: 14px;
+}
+
+.deleteButton:hover {
+    background-color: #FF0000;
 }
 
 .dropdown {
@@ -55,26 +101,33 @@ body {
     border: none;
     cursor: pointer;
     font-size: 24px;
+    padding: 0 10px;
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
-    left: -100px; 
-    background-color: #f9f9f9;
-    min-width: 100px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.0);
+    left: -80px;
+    background-color: #FFF;
+    min-width: 120px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
+    border-radius: 5px;
+    overflow: hidden;
 }
 
 .dropdown-content a {
     color: black;
-    padding: 8px 12px;
+    padding: 12px 16px;
     text-decoration: none;
     display: block;
+    font-size: 14px;
 }
 
 .dropdown-content a:hover {
     background-color: #f1f1f1;
 }
 
+.dropdown:hover .dropdown-content {
+    display: block;
+}
