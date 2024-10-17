@@ -1,5 +1,15 @@
 [
   {
+<<<<<<< HEAD
+=======
+    "id": 14,
+    "title": "こ",
+    "dueDate": "2024-10-10",
+    "completed": 0,
+    "description": null
+  },
+  {
+>>>>>>> c374b9b2606352a9f238c7bf3a91703ddeb211d7
     "id": 15,
     "title": "こ",
     "dueDate": "2024-10-10",
@@ -8,6 +18,7 @@
   },
   {
     "id": 16,
+<<<<<<< HEAD
     "title": "が",
     "dueDate": "2024-11-09",
     "completed": 0,
@@ -17,6 +28,10 @@
     "id": 17,
     "title": "じか",
     "dueDate": "2024-10-03",
+=======
+    "title": "test",
+    "dueDate": "2024-11-09",
+>>>>>>> c374b9b2606352a9f238c7bf3a91703ddeb211d7
     "completed": 1,
     "description": null
   }
