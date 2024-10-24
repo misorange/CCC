@@ -3,6 +3,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,6 +14,7 @@
 </head>
 
 <body>
+
   <h1>課題リスト</h1>
   <ul id="task-list"></ul>
 
@@ -22,19 +25,6 @@
     <label for="dueDate">期日:</label>
     <input type="date" id="dueDate" name="dueDate" required>
     <button type="submit">タスクを追加</button>
-  </form>
-
-  <h2>更新</h2>
-  <form id="update-task-form">
-    <!-- IDフィールドはtypeをhiddenにすることで非表示にします -->
-    <input type="hidden" id="update-id" name="update-id" required>
-    <label for="update-title">名前:</label>
-    <input type="text" id="update-title" name="update-title" required>
-    <label for="update-dueDate">期日:</label>
-    <input type="date" id="update-dueDate" name="update-dueDate" required>
-    <label for="update-completed">完了:</label>
-    <input type="checkbox" id="update-completed" name="update-completed">
-    <button type="submit">タスクを更新</button>
   </form>
 
 </body>

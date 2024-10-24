@@ -21,6 +21,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const taskInfo = document.createTextNode(` ${task.title} (期日: ${task.dueDate})`);
         li.appendChild(taskInfo);
 
+        // 現在の日付を取得
+        const currentDate = new Date().toISOString().split('T')[0];
+
+        // 期日が過去で未完了の場合に警告を表示
+        if (task.dueDate < currentDate && !task.completed) {
+          const warningPast = document.createElement('span');
+          warningPast.textContent = ' ⚠️期日切れ';
+          warningPast.style.color = 'red';
+          li.appendChild(warningPast);
+        }
+
+        // 期日が今日で未完了の場合に警告を表示
+        if (task.dueDate === currentDate && !task.completed) {
+          const warningToday = document.createElement('span');
+          warningToday.textContent = ' ⚠️本日が期日';
+          warningToday.style.color = 'orange';
+          li.appendChild(warningToday);
+        }
+
         // 編集ボタンを追加
         const editButton = document.createElement('button');
         editButton.textContent = '編集';
