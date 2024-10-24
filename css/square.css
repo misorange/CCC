@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'TanukiMagic';
-    src: url('../font/TanukiMagic.ttf') format('truetype'); /* パスを修正 */
+    src: url('../material/TanukiMagic.ttf') format('truetype'); /* パスを修正 */
     font-weight: normal;
     font-style: normal;
 }
@@ -12,7 +12,6 @@ body {
     padding: 20px;
 }
 
-
 h1 {
     font-size: 36px; /* フォントサイズを大きく */
     color: #333; /* 文字色を濃いめに */
@@ -22,8 +21,52 @@ h1 {
     letter-spacing: 2px; /* 文字の間隔を少し広げる */
 }
 
+#postForm {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+#postForm select {
+    margin-top: 10px; /* テキストエリアの下にマージンを追加 */
+    width: 100%;
+    max-width: 500px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #FFF6E8;
+    font-family: 'TanukiMagic', Arial, sans-serif;
+}
+
+#categoryFilter {
+    margin-top: 10px; /* フィルタリングセレクトボックスの上にマージンを追加 */
+    width: 100%;
+    max-width: 500px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #FFF6E8;
+    font-family: 'TanukiMagic', Arial, sans-serif;
+}
+
 textarea {
+    width: 100%;        
+    max-width: 500px;   
+    height: 100px;      
+    padding: 10px;      
+    font-size: 16px;    
+    box-sizing: border-box;
+    vertical-align: top;
     resize: none;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #FFF6E8; /* 背景色を他の部分と合わせる */
+    color: #333; /* 文字色を統一 */
+    font-family: 'TanukiMagic', Arial, sans-serif; /* フォントを適用 */
 }
 
 .input-field {
@@ -37,16 +80,11 @@ textarea {
     resize: none;
     border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #FFF;
+    background-color: #FFF6E8; /* 背景色を他の部分と合わせる */
+    font-family: 'TanukiMagic', Arial, sans-serif; /* フォントを適用 */
 }
 
-#postForm {
-    margin-bottom: 20px;
-    display: flex; /* フレックスボックスを使用 */
-    flex-direction: column; /* 縦に並べる */
-    align-items: center; /* 中央揃え */
-}
-
+/* ポストスタイル */
 .post {
     border: 1px solid #ddd;
     padding: 15px;
@@ -57,11 +95,13 @@ textarea {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* 返信フォームスタイル */
 .replyForm {
     margin-top: 10px;
     margin-left: 40px;
 }
 
+/* 返信スタイル */
 .reply {
     border: 1px solid #ddd;
     padding: 12px;
@@ -71,8 +111,10 @@ textarea {
     position: relative;
     background-color: #F9F9F9;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    font-family: 'TanukiMagic', Arial, sans-serif;
 }
 
+/* 削除ボタンスタイル */
 .deleteButton {
     position: absolute;
     top: 10px;
@@ -84,12 +126,14 @@ textarea {
     border-radius: 3px;
     padding: 5px 10px;
     font-size: 14px;
+    font-family: 'TanukiMagic', Arial, sans-serif;
 }
 
 .deleteButton:hover {
     background-color: #FF0000;
 }
 
+/* ドロップダウンメニュースタイル */
 .dropdown {
     position: absolute;
     top: 10px;
