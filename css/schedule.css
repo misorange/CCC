@@ -1,0 +1,49 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+div {
+    margin-bottom: 10px;
+}
+
+label {
+    margin-right: 10px;
+}
+
+select, button {
+    font-size: 1.2em;
+    padding: 0.5em;
+}
+
+table {
+    width: 100%;
+    table-layout: auto; /* 列の幅を固定 */
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    width: 14%; 
+}
+
+td span {
+    display: block;
+}
+
+
+td {
+    height: 50px;   /* 各セルの高さを指定 */
+    position: relative; /* 削除ボタンの位置調整のため */
+}
+
