@@ -67,6 +67,7 @@ textarea {
     background-color: #FFF6E8; /* 背景色を他の部分と合わせる */
     color: #333; /* 文字色を統一 */
     font-family: 'TanukiMagic', Arial, sans-serif; /* フォントを適用 */
+    height: 50px;
 }
 
 .input-field {
@@ -144,7 +145,7 @@ textarea {
     background-color: transparent;
     border: none;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 26px;
     padding: 0 10px;
 }
 
