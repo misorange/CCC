@@ -73,7 +73,24 @@ document.getElementById('submit-button').addEventListener('click', function() {
     const selectedOption = document.getElementById("options").value;
     // 取得した内容を表示
     console.log('確定された時間割:', timetable);
-    
+
+    fetch('http://localhost:5000/save-timetable', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ timetable, option: selectedOption }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('成功:', data);
+        alert(data.message); // 保存成功のメッセージを表示
+    })
+    .catch((error) => {
+        console.error('エラー:', error);
+    });
+});
+ /*   
     // クエリパラメータにエンコードしてリンクを生成
     const encodedTimetable = encodeURIComponent(JSON.stringify(timetable));
     const encodedOption = encodeURIComponent(selectedOption); // オプションをエンコード
@@ -83,7 +100,7 @@ document.getElementById('submit-button').addEventListener('click', function() {
     linkElement.innerHTML = `共有リンク: <a href="${shareableLink}">${shareableLink}</a>`;
     document.body.appendChild(linkElement);
 });
-
+*/
 window.onload = function() {
     const urlParams = new URLSearchParams(window.location.search);
     const timetableData = urlParams.get('timetable');
