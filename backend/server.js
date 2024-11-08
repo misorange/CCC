@@ -28,72 +28,82 @@ const column_maps = {
 
 // 課題リストを取得するエンドポイント
 app.get('/api/tasks', (req, res) => {
-    const sql = 'SELECT * FROM tasks';
-    db.all(sql, [], (err, rows) => {
-        if (err) {
-            return res.status(500).json({ message: err.message });
-        }
-        res.json(rows);
-        write_db_to_JSON("tasks");
-    });
+  const sql = 'SELECT * FROM tasks';
+  db.all(sql, [], (err, rows) => {
+    if (err) {
+      return res.status(500).json({ message: err.message });
+    }
+    res.json(rows);
+    write_db_to_JSON("tasks");
+  });
 });
 
 // 新しい課題を追加するエンドポイント
 app.post('/api/tasks', (req, res) => {
-    const { title, dueDate, completed } = req.body;
-    const sql = 'INSERT INTO tasks (title, dueDate, completed) VALUES (?, ?, ?)';
-    const params = [title, dueDate, completed ? 1 : 0];
-    db.run(sql, params, function(err) {
-        if (err) {
-            return res.status(400).json({ message: err.message });
-        }
-        res.status(201).json({ id: this.lastID });
-    });
+  const { title, dueDate, completed } = req.body;
+  const sql = 'INSERT INTO tasks (title, dueDate, completed) VALUES (?, ?, ?)';
+  const params = [title, dueDate, completed ? 1 : 0];
+  db.run(sql, params, function (err) {
+    if (err) {
+      return res.status(400).json({ message: err.message });
+    }
+    res.status(201).json({ id: this.lastID });
+  });
 });
 
 // 課題を更新するエンドポイント
 app.put('/api/tasks/:id', (req, res) => {
-    const { title, dueDate, completed } = req.body;
-    const { id } = req.params;
-    const sql = 'UPDATE tasks SET title = ?, dueDate = ?, completed = ? WHERE id = ?';
-    const params = [title, dueDate, completed ? 1 : 0, id];
-    db.run(sql, params, function(err) {
-        if (err) {
-            return res.status(400).json({ message: err.message });
-        }
-        res.json({ message: 'Task updated successfully' });
-    });
+  const { title, dueDate, completed } = req.body;
+  const { id } = req.params;
+  const sql = 'UPDATE tasks SET title = ?, dueDate = ?, completed = ? WHERE id = ?';
+  const params = [title, dueDate, completed ? 1 : 0, id];
+  db.run(sql, params, function (err) {
+    if (err) {
+      return res.status(400).json({ message: err.message });
+    }
+    res.json({ message: 'Task updated successfully' });
+  });
 });
 
 // 課題を削除するエンドポイント
 app.delete('/api/tasks/:id', (req, res) => {
-    const { id } = req.params;
-    const sql = 'DELETE FROM tasks WHERE id = ?';
-    db.run(sql, id, function(err) {
-        if (err) {
-            return res.status(400).json({ message: err.message });
-        }
-        res.json({ message: 'Task deleted successfully' });
-    });
+  const { id } = req.params;
+  const sql = 'DELETE FROM tasks WHERE id = ?';
+  db.run(sql, id, function (err) {
+    if (err) {
+      return res.status(400).json({ message: err.message });
+    }
+    res.json({ message: 'Task deleted successfully' });
+  });
 });
 
+//時間割のpostエンドポイント
+app.post('/save-timetable', (req, res) => {
+    const timetable = req.body;
+    timetables.push(timetable); // 配列に追加
+    res.json({ message: '保存しました！', timetable });
+});
+
+app.listen(port, () => {
+    console.log(`サーバーがポート${port}で起動中`);
+});
 // JSONファイルにデータを書き込む関数
 const write_db_to_JSON = (table_name) => {
-    db.all(`SELECT * FROM ${table_name}`, [], (err, rows) => {
-        if (err) {
-            console.error(`Error fetching ${table_name}:`, err);
-            return;
-        }
-        const data = rows;
-        const json_file_path = path.join(__dirname, 'data', `${table_name}.json`);
-        fs.writeFile(json_file_path, JSON.stringify(data, null, 2), (err) => {
-            if (err) {
-                console.error('Error writing to JSON file:', err);
-            } else {
-                console.log(`Tasks written to data/${table_name}.json`);
-            }
-        });
+  db.all(`SELECT * FROM ${table_name}`, [], (err, rows) => {
+    if (err) {
+      console.error(`Error fetching ${table_name}:`, err);
+      return;
+    }
+    const data = rows;
+    const json_file_path = path.join(__dirname, 'data', `${table_name}.json`);
+    fs.writeFile(json_file_path, JSON.stringify(data, null, 2), (err) => {
+      if (err) {
+        console.error('Error writing to JSON file:', err);
+      } else {
+        console.log(`Tasks written to data/${table_name}.json`);
+      }
     });
+  });
 };
 
 // JSONデータをデータベースに挿入
@@ -117,6 +127,17 @@ const write_JSON_to_db = async (table_name) => {
     const json_data = fs.readFileSync(json_file_path, 'utf8');
     const datas = JSON.parse(json_data);
 
+  // JSONデータをデータベースに挿入
+  const insert_stmt = database.prepare(`INSERT INTO ${table_name} (id, title, dueDate, completed, description) VALUES (?, ?, ?, ?, ?)`);
+  const db_data = await new Promise((resolve, reject) => {
+    database.all(`SELECT * FROM ${table_name}`, [], (err, rows) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(rows);
+    });
+  });
+  const update_stmt = database.prepare(`UPDATE ${table_name} SET title = ?, dueDate = ?, completed = ?, description = ? WHERE id = ?`);
 
     // データベースのカラムに挿入するための準備
     const insert_columns = Object.keys(column_map).join(', ');
@@ -126,9 +147,10 @@ const write_JSON_to_db = async (table_name) => {
     const db_datas = await new Promise((resolve, reject) => {
         database.all(`SELECT * FROM ${table_name}`, [], (err, rows) => {
             if (err) {
-                return reject(err);
+              return reject(err);
             }
-            resolve(rows);
+            resolve();
+          });
         });
     });
     const update_stmt = database.prepare(`UPDATE ${table_name} SET ${Object.entries(column_map).map(([key, value]) => `${value} = ?`).join(', ')} WHERE ${column_map.id} = ?`);
@@ -171,7 +193,12 @@ const write_JSON_to_db = async (table_name) => {
             } catch (err) {
                 console.error(`Error updating task with id ${data[column_map.id]}:`, err);
             }
-        }
+            resolve();
+          });
+        });
+      } catch (err) {
+        console.error(`Error updating task with id ${task.id}:`, err);
+      }
     }
     
 
@@ -189,33 +216,36 @@ const write_JSON_to_db = async (table_name) => {
                 });
             } catch (err) {
                 console.error(`Error deleting task with id ${db_data[column_map.id]}:`, err);
-            }
-        }
-    }
-    
-    insert_stmt.finalize();
-    update_stmt.finalize();
 
+            }
+            resolve();
+          });
+        });
+      } catch (err) {
+        console.error(`Error deleting task with id ${db_task.id}:`, err);
+      }
+    }
+  }
     console.log('New datas have been imported to the database.');
 };
 
 const get_new_datas = async (table_name, datas, database) => {
-    if (!Array.isArray(datas)) {
-        console.error('Data is not an array');
-        return [];
-    }
+  if (!Array.isArray(datas)) {
+    console.error('Data is not an array');
+    return [];
+  }
 
-    const db_ids = await new Promise((resolve, reject) => {
-        database.all(`SELECT id FROM ${table_name}`, [], (err, rows) => {
-            if (err) {
-                return reject(err);
-            }
-            resolve(rows.map(row => row.id));
-        });
+  const db_ids = await new Promise((resolve, reject) => {
+    database.all(`SELECT id FROM ${table_name}`, [], (err, rows) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(rows.map(row => row.id));
     });
+  });
 
-    const new_datas = datas.filter(data => !db_ids.includes(data.id));
-    return new_datas;
+  const new_datas = datas.filter(data => !db_ids.includes(data.id));
+  return new_datas;
 };
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, async () => {
