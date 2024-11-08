@@ -14,7 +14,9 @@ app.use(body_parser.json());
 app.use(cors());
 
 // テーブル名の配列を定義
-const tableNames = ['tasks', 'UID']; // 必要なテーブル名を追加
+const tableNames = [
+  'tasks'
+  ]; // 必要なテーブル名を追加
 
 const column_maps = {
     tasks: {
@@ -84,9 +86,6 @@ app.post('/save-timetable', (req, res) => {
     res.json({ message: '保存しました！', timetable });
 });
 
-app.listen(port, () => {
-    console.log(`サーバーがポート${port}で起動中`);
-});
 // JSONファイルにデータを書き込む関数
 const write_db_to_JSON = (table_name) => {
   db.all(`SELECT * FROM ${table_name}`, [], (err, rows) => {
@@ -127,18 +126,6 @@ const write_JSON_to_db = async (table_name) => {
     const json_data = fs.readFileSync(json_file_path, 'utf8');
     const datas = JSON.parse(json_data);
 
-  // JSONデータをデータベースに挿入
-  const insert_stmt = database.prepare(`INSERT INTO ${table_name} (id, title, dueDate, completed, description) VALUES (?, ?, ?, ?, ?)`);
-  const db_data = await new Promise((resolve, reject) => {
-    database.all(`SELECT * FROM ${table_name}`, [], (err, rows) => {
-      if (err) {
-        return reject(err);
-      }
-      resolve(rows);
-    });
-  });
-  const update_stmt = database.prepare(`UPDATE ${table_name} SET title = ?, dueDate = ?, completed = ?, description = ? WHERE id = ?`);
-
     // データベースのカラムに挿入するための準備
     const insert_columns = Object.keys(column_map).join(', ');
     const insert_placeholders = Object.keys(column_map).map(() => '?').join(', ');
@@ -149,10 +136,9 @@ const write_JSON_to_db = async (table_name) => {
             if (err) {
               return reject(err);
             }
-            resolve();
+            resolve(rows);
           });
         });
-    });
     const update_stmt = database.prepare(`UPDATE ${table_name} SET ${Object.entries(column_map).map(([key, value]) => `${value} = ?`).join(', ')} WHERE ${column_map.id} = ?`);
     
     const json_ids = datas.map(task => task.id);
@@ -177,7 +163,7 @@ const write_JSON_to_db = async (table_name) => {
     }
     
 
-    // 既存のデータを更新
+  // 既存のデータを更新
     for (const data of datas) {
         if (db_ids.includes(data[column_map.id])) {
             try {
@@ -193,40 +179,33 @@ const write_JSON_to_db = async (table_name) => {
             } catch (err) {
                 console.error(`Error updating task with id ${data[column_map.id]}:`, err);
             }
-            resolve();
-          });
-        });
-      } catch (err) {
-        console.error(`Error updating task with id ${task.id}:`, err);
-      }
+        }
     }
+    
     
 
     // データベースに存在するがJSONに存在しないデータを削除
     for (const db_data of db_datas) {
-        if (!json_ids.includes(db_data[column_map.id])) {
-            try {
-                await new Promise((resolve, reject) => {
-                    database.run(`DELETE FROM ${table_name} WHERE ${column_map.id} = ?`, db_data[column_map.id], (err) => {
-                        if (err) {
-                            return reject(err);
-                        }
-                        resolve();
-                    });
-                });
-            } catch (err) {
-                console.error(`Error deleting task with id ${db_data[column_map.id]}:`, err);
-
-            }
-            resolve();
-          });
-        });
-      } catch (err) {
-        console.error(`Error deleting task with id ${db_task.id}:`, err);
+      if (!json_ids.includes(db_data[column_map.id])) {
+          try {
+              await new Promise((resolve, reject) => {
+                  database.run(`DELETE FROM ${table_name} WHERE ${column_map.id} = ?`, db_data[column_map.id], (err) => {
+                      if (err) {
+                          return reject(err);
+                      }
+                      resolve();
+                  });
+              });
+          } catch (err) {
+              console.error(`Error deleting task with id ${db_data[column_map.id]}:`, err);
+          }
       }
-    }
   }
-    console.log('New datas have been imported to the database.');
+  
+  insert_stmt.finalize();
+  update_stmt.finalize();
+
+  console.log('New datas have been imported to the database.');
 };
 
 const get_new_datas = async (table_name, datas, database) => {
