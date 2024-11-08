@@ -86,6 +86,16 @@ app.post('/save-timetable', (req, res) => {
     res.json({ message: '保存しました！', timetable });
 });
 
+//時間割のpostエンドポイント
+app.post('/save-timetable', (req, res) => {
+    const timetable = req.body;
+    timetables.push(timetable); // 配列に追加
+    res.json({ message: '保存しました！', timetable });
+});
+
+app.listen(port, () => {
+    console.log(`サーバーがポート${port}で起動中`);
+});
 // JSONファイルにデータを書き込む関数
 const write_db_to_JSON = (table_name) => {
   db.all(`SELECT * FROM ${table_name}`, [], (err, rows) => {
