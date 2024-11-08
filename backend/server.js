@@ -1,14 +1,30 @@
 // server.js
 const express = require('express');
+const bcrypt = require('bcrypt');
 const body_parser = require('body-parser');
 const cors = require('cors');
 const fs = require('fs');
 const db = require('./db');
 const path = require('path');
+const jwt = require('jsonwebtoken');
+
 
 const app = express();
 app.use(body_parser.json());
 app.use(cors());
+
+// テーブル名の配列を定義
+const tableNames = ['tasks', 'UID']; // 必要なテーブル名を追加
+
+const column_maps = {
+    tasks: {
+        id: 'id',           // JSONとデータベースでIDのカラム名が同じであることを前提
+        title: 'title',
+        dueDate: 'dueDate',
+        completed: 'completed',
+        description: 'description'
+    }
+};
 
 // 課題リストを取得するエンドポイント
 app.get('/api/tasks', (req, res) => {
@@ -61,6 +77,16 @@ app.delete('/api/tasks/:id', (req, res) => {
   });
 });
 
+//時間割のpostエンドポイント
+app.post('/save-timetable', (req, res) => {
+    const timetable = req.body;
+    timetables.push(timetable); // 配列に追加
+    res.json({ message: '保存しました！', timetable });
+});
+
+app.listen(port, () => {
+    console.log(`サーバーがポート${port}で起動中`);
+});
 // JSONファイルにデータを書き込む関数
 const write_db_to_JSON = (table_name) => {
   db.all(`SELECT * FROM ${table_name}`, [], (err, rows) => {
@@ -81,19 +107,25 @@ const write_db_to_JSON = (table_name) => {
 };
 
 // JSONデータをデータベースに挿入
-// 後でtasks以外も対応できるようにする
 const write_JSON_to_db = async (table_name) => {
-  const sqlite3 = require('sqlite3').verbose();
-  const database = new sqlite3.Database('./database.db');
-  // JSONファイルの読み込み
-  const json_file_path = path.join(__dirname, 'data', `${table_name}.json`);
-  if (!fs.existsSync(json_file_path)) {
-    console.error(`JSON file not found: ${json_file_path}`);
-    return;
-  }
-  const json_data = fs.readFileSync(json_file_path, 'utf8');
-  const tasks = JSON.parse(json_data);
+    const sqlite3 = require('sqlite3').verbose();
+    const database = new sqlite3.Database('./database.db');
 
+    // テーブル名に基づいてカラムマップを取得
+    const column_map = column_maps[table_name];
+    if (!column_map) {
+        console.error(`No column map defined for table: ${table_name}`);
+        return;
+    }
+
+    // JSONファイルの読み込み
+    const json_file_path = path.join(__dirname, 'data', `${table_name}.json`);
+    if (!fs.existsSync(json_file_path)) {
+        console.error(`JSON file not found: ${json_file_path}`);
+        return;
+    }
+    const json_data = fs.readFileSync(json_file_path, 'utf8');
+    const datas = JSON.parse(json_data);
 
   // JSONデータをデータベースに挿入
   const insert_stmt = database.prepare(`INSERT INTO ${table_name} (id, title, dueDate, completed, description) VALUES (?, ?, ?, ?, ?)`);
@@ -107,34 +139,59 @@ const write_JSON_to_db = async (table_name) => {
   });
   const update_stmt = database.prepare(`UPDATE ${table_name} SET title = ?, dueDate = ?, completed = ?, description = ? WHERE id = ?`);
 
-  const json_ids = tasks.map(task => task.id);
-  const db_ids = db_data.map(task => task.id);
-  // 新しいデータを挿入
-  for (const task of tasks) {
-    if (!db_ids.includes(task.id)) {
-      try {
-        await new Promise((resolve, reject) => {
-          insert_stmt.run(task.id, task.title, task.dueDate, task.completed, task.description, (err) => {
+    // データベースのカラムに挿入するための準備
+    const insert_columns = Object.keys(column_map).join(', ');
+    const insert_placeholders = Object.keys(column_map).map(() => '?').join(', ');
+    const insert_stmt = database.prepare(`INSERT INTO ${table_name} (${insert_columns}) VALUES (${insert_placeholders})`);
+    
+    const db_datas = await new Promise((resolve, reject) => {
+        database.all(`SELECT * FROM ${table_name}`, [], (err, rows) => {
             if (err) {
               return reject(err);
             }
             resolve();
           });
         });
-      } catch (err) {
-        console.error(`Error inserting task with id ${task.id}:`, err);
-      }
+    });
+    const update_stmt = database.prepare(`UPDATE ${table_name} SET ${Object.entries(column_map).map(([key, value]) => `${value} = ?`).join(', ')} WHERE ${column_map.id} = ?`);
+    
+    const json_ids = datas.map(task => task.id);
+    const db_ids = db_datas.map(task => task.id);
+    // 新しいデータを挿入
+    for (const data of datas) {
+        if (!db_ids.includes(data[column_map.id])) {
+            try {
+                const insert_values = Object.keys(column_map).map(key => data[key]);
+                await new Promise((resolve, reject) => {
+                    insert_stmt.run(...insert_values, (err) => {
+                        if (err) {
+                            return reject(err);
+                        }
+                        resolve();
+                    });
+                });
+            } catch (err) {
+                console.error(`Error inserting task with id ${data[column_map.id]}:`, err);
+            }
+        }
     }
-  }
+    
 
-  // 既存のデータを更新
-  for (const task of tasks) {
-    if (db_ids.includes(task.id)) {
-      try {
-        await new Promise((resolve, reject) => {
-          update_stmt.run(task.title, task.dueDate, task.completed, task.description, task.id, (err) => {
-            if (err) {
-              return reject(err);
+    // 既存のデータを更新
+    for (const data of datas) {
+        if (db_ids.includes(data[column_map.id])) {
+            try {
+                const update_values = Object.keys(column_map).map(key => data[key]);
+                await new Promise((resolve, reject) => {
+                    update_stmt.run(...update_values, data[column_map.id], (err) => {
+                        if (err) {
+                            return reject(err);
+                        }
+                        resolve();
+                    });
+                });
+            } catch (err) {
+                console.error(`Error updating task with id ${data[column_map.id]}:`, err);
             }
             resolve();
           });
@@ -143,16 +200,23 @@ const write_JSON_to_db = async (table_name) => {
         console.error(`Error updating task with id ${task.id}:`, err);
       }
     }
-  }
+    
 
-  // データベースに存在するがJSONに存在しないデータを削除
-  for (const db_task of db_data) {
-    if (!json_ids.includes(db_task.id)) {
-      try {
-        await new Promise((resolve, reject) => {
-          database.run(`DELETE FROM ${table_name} WHERE id = ?`, db_task.id, (err) => {
-            if (err) {
-              return reject(err);
+    // データベースに存在するがJSONに存在しないデータを削除
+    for (const db_data of db_datas) {
+        if (!json_ids.includes(db_data[column_map.id])) {
+            try {
+                await new Promise((resolve, reject) => {
+                    database.run(`DELETE FROM ${table_name} WHERE ${column_map.id} = ?`, db_data[column_map.id], (err) => {
+                        if (err) {
+                            return reject(err);
+                        }
+                        resolve();
+                    });
+                });
+            } catch (err) {
+                console.error(`Error deleting task with id ${db_data[column_map.id]}:`, err);
+
             }
             resolve();
           });
@@ -162,11 +226,7 @@ const write_JSON_to_db = async (table_name) => {
       }
     }
   }
-
-  insert_stmt.finalize();
-  update_stmt.finalize();
-
-  console.log('New tasks have been imported to the database.');
+    console.log('New datas have been imported to the database.');
 };
 
 const get_new_datas = async (table_name, datas, database) => {
@@ -188,7 +248,15 @@ const get_new_datas = async (table_name, datas, database) => {
   return new_datas;
 };
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  write_JSON_to_db("tasks");
+app.listen(PORT, async () => {
+    console.log(`Server is running on port ${PORT}`);
+
+    // 各テーブルに対してデータベースに書き込む
+    for (const tableName of tableNames) {
+        try {
+            await write_JSON_to_db(tableName);
+        } catch (err) {
+            console.error(`Error writing data to ${tableName}:`, err);
+        }
+    }
 });
