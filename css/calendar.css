@@ -9,7 +9,7 @@ main {
 main h2 {
     font-size: 36px; /* 大きめのフォントサイズに調整 */
     color: #4a4a4a; /* おしゃれなダークグレー */
-    font-family: 'Arial', sans-serif; /* フォントをシンプルでモダンに */
+    font-family: 'TanukiMagic', Arial, sans-serif;
     font-weight: bold; /* 太字にして目立たせる */
     text-transform: uppercase; /* 文字をすべて大文字にする */
     letter-spacing: 5px; /* 文字間隔を広げる */
