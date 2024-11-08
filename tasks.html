@@ -1,0 +1,45 @@
+<!-- tasks.html -->
+
+<!DOCTYPE html>
+<html lang="ja">
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasks</title>
+  <link rel="stylesheet" href="css/tasks.css">
+  <script defer src="js/tasks.js"></script>
+</head>
+
+<body>
+
+  <header>
+    <nav>
+      <ul class="nav-menu">
+        <li><a href="index.html">ホーム</a></li>
+        <li><a href="schedule.html">時間割</a></li>
+        <li><a href="tasks.html">課題リスト</a></li>
+        <li><a href="to_do.html">Todoリスト</a></li>
+        <li><a href="calendar.html">カレンダー</a></li>
+        <li><a href="square.html">教えあい広場</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <h1>課題リスト</h1>
+  <ul class="task-list" id="task-list"></ul>
+
+  <h2>追加</h2>
+  <form id="task-form">
+    <label for="title">名前:</label>
+    <input type="text" id="title" name="title" required>
+    <label for="dueDate">期日:</label>
+    <input type="date" id="dueDate" name="dueDate" required>
+    <button type="submit">タスクを追加</button>
+  </form>
+
+</body>
+
+</html>

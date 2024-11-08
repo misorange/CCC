@@ -1,0 +1,132 @@
+/* 基本的なスタイル設定 */
+
+@font-face {
+  font-family: 'TanukiMagic';
+  src: url('../material/TanukiMagic.ttf') format('truetype');
+  /* パスを修正 */
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+  font-family: 'TanukiMagic', Arial, sans-serif;
+  background-color: #FFF6E8;
+  margin: 0;
+  padding: 20px;
+  flex-direction: column;
+  padding-bottom: 100px;
+}
+
+header {
+  background-color: rgba(255, 165, 0, 0.8);
+  padding: 10px 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+  color: #444;
+  margin-top: 40px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 40px;
+}
+
+h2 {
+  color: #444;
+  margin-top: 40px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 37px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.task-list li {
+  background-color: #ffffff;
+  margin-bottom: 10px;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+}
+
+.nav-menu li {
+  display: inline-block;
+  margin: 0 15px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #333;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+nav a:hover {
+  color: #FF6347;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+form {
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+input[type="text"],
+input[type="date"] {
+  font-family: 'TanukiMagic', Arial, sans-serif;
+  width: calc(100% - 22px);
+  /* 左右の余白を考慮した幅 */
+  margin-left: 10px;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+button {
+  font-family: 'TanukiMagic', Arial, sans-serif;
+  width: auto;
+  /* 自然な幅に戻す */
+  margin-left: 10px;
+  padding: 10px 20px;
+  /* 横幅を調整 */
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: rgba(255, 165, 0, 0.4);
+  color: #333;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #e6e6e6;
+}
+
+input[type="checkbox"] {
+  width: auto;
+  margin-left: 10px;
+}
