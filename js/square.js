@@ -251,3 +251,10 @@ function displayPosts() {
         postList.prepend(newPost);
     });
 }
+
+// リセットボタンの機能
+function clearLocalStorage(){
+    localStorage.removeItem('posts');
+    alert("時間割がリセットされました！");
+    location.reload();  // ページをリロードして初期状態に戻す
+};
