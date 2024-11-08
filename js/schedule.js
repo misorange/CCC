@@ -65,6 +65,7 @@ function saveTimetableToLocalStorage() {
     }
 
     const selectedOption = document.getElementById("options").value;
+
     localStorage.setItem('timetable', JSON.stringify(timetable));
     localStorage.setItem('option', selectedOption);
 
@@ -95,7 +96,6 @@ function loadTimetableFromLocalStorage() {
 
     if (optionData) {
         document.getElementById("options").value = optionData;
-
         if (optionData === "saturday") {
             saturdayHeader.style.display = "table-cell";
             saturdayCells.forEach(cell => {
