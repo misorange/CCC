@@ -89,8 +89,6 @@ document.getElementById('submit-button').addEventListener('click', function() {
     .catch((error) => {
         console.error('エラー:', error);
     });
-});
- /*   
     // クエリパラメータにエンコードしてリンクを生成
     const encodedTimetable = encodeURIComponent(JSON.stringify(timetable));
     const encodedOption = encodeURIComponent(selectedOption); // オプションをエンコード
@@ -100,7 +98,6 @@ document.getElementById('submit-button').addEventListener('click', function() {
     linkElement.innerHTML = `共有リンク: <a href="${shareableLink}">${shareableLink}</a>`;
     document.body.appendChild(linkElement);
 });
-*/
 window.onload = function() {
     const urlParams = new URLSearchParams(window.location.search);
     const timetableData = urlParams.get('timetable');
