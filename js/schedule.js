@@ -68,7 +68,7 @@ function saveTimetableToLocalStorage() {
     localStorage.setItem('timetable', JSON.stringify(timetable));
     localStorage.setItem('option', selectedOption);
 
-    alert("時間割が保存されました");
+    alert("時間割が保存されました！");
 }
 
 // 保存ボタンのイベントリスナー
@@ -130,6 +130,7 @@ function loadTimetableFromLocalStorage() {
 document.getElementById('reset-button').addEventListener('click', function() {
     localStorage.removeItem('timetable');
     localStorage.removeItem('option');
+    alert("時間割がリセットされました！");
     location.reload();  // ページをリロードして初期状態に戻す
 });
 
